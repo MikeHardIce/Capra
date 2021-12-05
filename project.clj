@@ -6,4 +6,4 @@
             :year 2021
             :key "mit"}
   :dependencies [[org.clojure/clojure "1.10.3"]]
-  :repl-options {:init-ns capra.core})
+  :repl-options {:init-ns capra.playground})
