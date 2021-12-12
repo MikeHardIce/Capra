@@ -41,8 +41,7 @@
     (if fill?
       (.fill graphics shape)
       (.draw graphics shape))
-    (.dispose graphics)
-    )
+    (.dispose graphics))
   canvas)
 
 (defn draw-rect 
