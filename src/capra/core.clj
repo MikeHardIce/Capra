@@ -40,7 +40,9 @@
     (.setStroke graphics (BasicStroke. thickness))
     (if fill?
       (.fill graphics shape)
-      (.draw graphics shape)))
+      (.draw graphics shape))
+    (.dispose graphics)
+    )
   canvas)
 
 (defn draw-rect 
