@@ -2,7 +2,7 @@
 
 ```
 (ns capra.playground
-  (:require [capra.core :refer [ellipse rect line create-window draw->]])
+  (:require [capra.core :refer [ellipse rect line text create-window draw-> get-text-dimensions]])
   (:import [java.awt Color]))
 
 (defn draw-weigth 
@@ -23,8 +23,10 @@
             (rect 300 100 50 60 Color/black false)
             (rect 100 300 50 60 Color/green true)
             (rect 300 300 50 60 Color/orange true)
-            (line 200 200 400 400 Color/green 5))
+            (line 200 200 400 400 Color/green 5)
+            (text 200 50 "Hello this is a test" Color/pink 20))
     (draw-weigth canvas 400 400)
     (draw-weigth canvas 200 200)
+    (println "Size: " (get-text-dimensions canvas "Hello this is a test" 20))
     canvas))
 ```

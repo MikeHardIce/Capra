@@ -68,3 +68,22 @@
   (let [[x0 y0] [(- x (/ width 2)) (- y (/ height 2))]
         ^Ellipse2D circle (Ellipse2D$Double. x0 y0 width height)]
     (draw *graphics* circle color fill? thickness))))
+
+(defn get-text-dimensions
+  "Gets the width and the height of a given text"
+  [^Canvas canvas text font-size]
+  (let [^Graphics2D gr (.getGraphics canvas)
+        ^java.awt.Font font (.getFont gr)
+        ^java.awt.Font font (.deriveFont font (float font-size))]
+    (.setFont gr font)
+    (let [box (.getStringBounds (.getFontMetrics gr) (str text) gr)]
+      [(.getWidth box) (.getHeight box)])))
+
+(defn text
+  [^Double x ^Double y ^String content color font-size]
+  (let [^Graphics2D gr *graphics*
+        ^java.awt.Font font (.getFont gr)
+        ^java.awt.Font font (.deriveFont font (float font-size))]
+    (.setColor gr color)
+    (.setFont gr font)
+    (.drawString gr content x y)))
