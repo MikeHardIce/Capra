@@ -1,4 +1,9 @@
-# capra
+# Capra
+
+Little straight forward drawing library that uses Java AWT underneath.
+
+
+[See Changes](CHANGELOG.md)
 
 ```
 (ns capra.playground
