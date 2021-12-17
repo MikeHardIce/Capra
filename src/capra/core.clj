@@ -6,12 +6,26 @@
 
 (set! *warn-on-reflection* true)
 
+(defmulti handle-event (fn [action event]
+                         action))
+
+(defmethod handle-event :default [action event]
+  (println "Event: " action " Map: " event))
+
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
   ([x y width height title] (create-window x y width height title Color/white false))
   ([x y width height title color] (create-window x y width height title color false))
   ([x y width height title color resizable?]
   (let [dimension (Dimension. width height)
+        mouse-events (proxy [MouseAdapter] []
+                       (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event)}))
+                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event)}))
+                       (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event)}))
+                       (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:button (.getButton event) :x (.getX event) :y (.getY event)})))
+        key-events (proxy [KeyAdapter] []
+                     (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event)}))
+                     (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event)})))
         canvas (doto (Canvas.)
                  (.setName title)
                  (.setPreferredSize dimension)
@@ -30,7 +44,9 @@
       (.setLocation x y)
       (.setVisible true))
     (doto canvas
-      (.requestFocus))
+      (.requestFocus)
+      (.addMouseListener mouse-events)
+      (.addKeyListener key-events))
     {:window window :canvas canvas})))
 
 (declare ^:dynamic *graphics*)
@@ -80,7 +96,7 @@
       [(.getWidth box) (.getHeight box)])))
 
 (defn text
-  [^Double x ^Double y ^String content color font-size]
+  [^Integer x ^Integer y ^String content color font-size]
   (let [^Graphics2D gr *graphics*
         ^java.awt.Font font (.getFont gr)
         ^java.awt.Font font (.deriveFont font (float font-size))]
