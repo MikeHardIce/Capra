@@ -7,7 +7,7 @@ Little straight forward drawing library that uses Java AWT underneath.
 
 [See Changes](CHANGELOG.md)
 
-```
+```Clojure
 (ns capra.playground
   (:require [capra.core :refer [ellipse rect line text create-window draw-> get-text-dimensions handle-event]])
   (:import [java.awt Color]))
