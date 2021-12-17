@@ -14,7 +14,7 @@
       (ellipse x y 70 80 Color/green true)))
 
 (defn main []
-  (let [context (create-window 200 100 500 600 "Meeehhhh" Color/black)
+  (let [context (create-window 200 100 500 600 "Meeehhhh" Color/black false "resources/icon-test.bla")
         canvas (:canvas context)]
     (doto (:window context)
       (.setLocation 300 200))

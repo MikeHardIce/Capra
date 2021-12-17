@@ -1,4 +1,5 @@
 (ns capra.core
+  (:require [clojure.java.io])
   (:import [java.awt Color Shape Dimension Graphics2D Canvas BorderLayout Rectangle BasicStroke]
            [java.awt.event InputEvent ComponentEvent KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter WindowAdapter WindowEvent]
            [java.awt.geom Ellipse2D Ellipse2D$Double Line2D Line2D$Double Rectangle2D]
@@ -14,9 +15,10 @@
 
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
-  ([x y width height title] (create-window x y width height title Color/white false))
-  ([x y width height title color] (create-window x y width height title color false))
-  ([x y width height title color resizable?]
+  ([x y width height title] (create-window x y width height title Color/white false nil))
+  ([x y width height title color] (create-window x y width height title color false nil))
+  ([x y width height title color resizable?] (create-window x y width height title color resizable? nil))
+  ([x y width height title color resizable? icon-path]
   (let [dimension (Dimension. width height)
         mouse-events (proxy [MouseAdapter] []
                        (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event)}))
@@ -44,6 +46,10 @@
       (.setTitle title)
       (.setLocation x y)
       (.setVisible true))
+    (when (and (seq icon-path)
+               (some #(.endsWith ^String icon-path %) [".png" ".gif" ".jpeg"])
+               (.exists (clojure.java.io/file icon-path)))
+      (.setIconImage window (.getImage (ImageIcon. ^String icon-path))))
     (doto canvas
       (.requestFocus)
       (.addMouseListener mouse-events)
