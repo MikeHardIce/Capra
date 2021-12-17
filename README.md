@@ -1,5 +1,7 @@
 # Capra
 
+[![Clojars Project](https://img.shields.io/clojars/v/com.github.mikehardice/capra.svg)](https://clojars.org/com.github.mikehardice/capra)
+
 Little straight forward drawing library that uses Java AWT underneath.
 
 
