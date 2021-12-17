@@ -20,9 +20,10 @@
   (let [dimension (Dimension. width height)
         mouse-events (proxy [MouseAdapter] []
                        (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event)}))
-                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event)}))
-                       (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event)}))
-                       (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:button (.getButton event) :x (.getX event) :y (.getY event)})))
+                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event)})))
+        mouse-motion-events (proxy [MouseMotionAdapter] []
+                              (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event)}))
+                              (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:x (.getX event) :y (.getY event)})))
         key-events (proxy [KeyAdapter] []
                      (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event)}))
                      (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event)})))
@@ -46,6 +47,7 @@
     (doto canvas
       (.requestFocus)
       (.addMouseListener mouse-events)
+      (.addMouseMotionListener mouse-motion-events)
       (.addKeyListener key-events))
     {:window window :canvas canvas})))
 

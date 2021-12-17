@@ -2,7 +2,7 @@
 
 ```
 (ns capra.playground
-  (:require [capra.core :refer [ellipse rect line text create-window draw-> get-text-dimensions]])
+  (:require [capra.core :refer [ellipse rect line text create-window draw-> get-text-dimensions handle-event]])
   (:import [java.awt Color]))
 
 (defn draw-weigth 
@@ -29,4 +29,7 @@
     (draw-weigth canvas 200 200)
     (println "Size: " (get-text-dimensions canvas "Hello this is a test" 20))
     canvas))
+
+(defmethod handle-event :mouse-dragged [_ event]
+  (println "mouse at (" (:x event) " , " (:y event) ") is being dragged"))
 ```
