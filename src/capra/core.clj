@@ -10,8 +10,7 @@
 (defmulti handle-event (fn [action event]
                          action))
 
-(defmethod handle-event :default [action event]
-  (println "Event: " action " Map: " event))
+(defmethod handle-event :default [action event])
 
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
@@ -56,6 +55,10 @@
       (.addMouseMotionListener mouse-motion-events)
       (.addKeyListener key-events))
     {:window window :canvas canvas})))
+
+(defn close-window 
+  [^JFrame window]
+  (.dispatchEvent window (java.awt.event.WindowEvent. window java.awt.event.WindowEvent/WINDOW_CLOSING)))
 
 (declare ^:dynamic *graphics*)
 

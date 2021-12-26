@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.1-alpha2
+
+* close-window function to close the window directly
+
 ### 0.0.1-alpha1
 
 * events via multi method handle-event
