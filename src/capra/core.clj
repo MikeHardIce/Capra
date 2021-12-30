@@ -53,7 +53,8 @@
       (.requestFocus)
       (.addMouseListener mouse-events)
       (.addMouseMotionListener mouse-motion-events)
-      (.addKeyListener key-events))
+      (.addKeyListener key-events)
+      (.setFocusTraversalKeysEnabled false))
     {:window window :canvas canvas})))
 
 (defn close-window 

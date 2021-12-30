@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.1-alpha3
+
+* expose key events like tab, shift etc. 
+
 ### 0.0.1-alpha2
 
 * close-window function to close the window directly
