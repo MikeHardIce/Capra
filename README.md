@@ -39,4 +39,7 @@ Little straight forward drawing library that uses Java AWT underneath.
 
 (defmethod handle-event :mouse-dragged [_ event]
   (println "mouse at (" (:x event) " , " (:y event) ") is being dragged"))
+
+(defmethod handle-event :key-pressed [_ {:keys [code char]}]
+  (println "key pressed " code " (code) " char " (char)"))
 ```
