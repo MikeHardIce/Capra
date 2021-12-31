@@ -108,10 +108,16 @@
       [(.getWidth box) (.getHeight box)])))
 
 (defn text
-  [^Integer x ^Integer y ^String content color font-size]
-  (let [^Graphics2D gr *graphics*
-        ^java.awt.Font font (.getFont gr)
-        ^java.awt.Font font (.deriveFont font (float font-size))]
-    (.setColor gr color)
-    (.setFont gr font)
-    (.drawString gr content x y)))
+  ([^Integer x ^Integer y ^String content color font-size]
+   (text x y content color font-size nil))
+  ([^Integer x ^Integer y ^String content color font-size style]
+   (let [^Graphics2D gr *graphics*
+         ^java.awt.Font font (.getFont gr)
+         ^java.awt.Font font (.deriveFont font (float font-size))
+         ^java.awt.Font font (.deriveFont font ^Integer (cond
+                                                          (= style :bold) java.awt.Font/BOLD
+                                                          (= style :italic) java.awt.Font/ITALIC
+                                                          :else java.awt.Font/PLAIN))]
+     (.setColor gr color)
+     (.setFont gr font)
+     (.drawString gr content x y))))

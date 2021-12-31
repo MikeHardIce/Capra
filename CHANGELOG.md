@@ -4,6 +4,7 @@
 ### 0.0.1-alpha3
 
 * expose key events like tab, shift etc. 
+* support bold and italic style when drawing text
 
 ### 0.0.1-alpha2
 
