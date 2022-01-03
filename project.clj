@@ -1,4 +1,4 @@
-(defproject com.github.mikehardice/capra "0.0.1-alpha3"
+(defproject com.github.mikehardice/capra "0.0.1-alpha4"
   :description "A small library for basic shapes and events using Java2d/awt"
   :url "https://github.com/MikeHardIce/Capra"
   :license {:name "MIT License"

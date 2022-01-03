@@ -57,6 +57,15 @@
       (.setFocusTraversalKeysEnabled false))
     {:window window :canvas canvas})))
 
+(defn properties 
+  "Gets the properties of the context, which is the map returned by 'create-window' function"
+  [{:keys [^JFrame window ^Canvas canvas]}]
+  {:x (.getX window) :y (.getY window) 
+   :width (.getWidth window) :height (.getHeight window)
+   :title (.getName window) :color (.getBackground canvas)
+   :resizable? (.isResizable window)
+   :icon-path (first (.getIconImages window))})
+
 (defn close-window 
   [^JFrame window]
   (.dispatchEvent window (java.awt.event.WindowEvent. window java.awt.event.WindowEvent/WINDOW_CLOSING)))
@@ -83,6 +92,11 @@
   ([x y width height color fill? thickness]
   (let [^Rectangle2D rec (Rectangle. x y width height)]
     (draw *graphics* rec color fill? thickness))))
+
+(defn clear-rect 
+  "Fills a rectangular shape with the current background color"
+  [x y width height]
+  (.clearRect *graphics* x y width height))
 
 (defn line
   ([x0 y0 x1 y1 color] (line x0 y0 x1 y1 color 1))

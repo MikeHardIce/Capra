@@ -1,6 +1,11 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.1-alpha4
+
+* added properties function which returns a map of the window/canvas properties
+* clear-rect function to clear out a rectangular area with the current background color
+
 ### 0.0.1-alpha3
 
 * expose key events like tab, shift etc. 
