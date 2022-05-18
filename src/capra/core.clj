@@ -96,20 +96,20 @@
 (defn clear-rect 
   "Fills a rectangular shape with the current background color"
   [x y width height]
-  (.clearRect *graphics* x y width height))
+  (.clearRect ^Graphics2D *graphics* x y width height))
 
 (defn line
   ([x0 y0 x1 y1 color] (line x0 y0 x1 y1 color 1))
   ([x0 y0 x1 y1 color thickness]
   (let [^Line2D line (Line2D$Double. x0 y0 x1 y1)]
-    (draw *graphics* line color nil thickness))))
+    (draw ^Graphics2D *graphics* line color nil thickness))))
 
 (defn ellipse
   ([x y width height color fill?] (ellipse x y width height color fill? 1))
   ([x y width height color fill? thickness]
   (let [[x0 y0] [(- x (/ width 2)) (- y (/ height 2))]
         ^Ellipse2D circle (Ellipse2D$Double. x0 y0 width height)]
-    (draw *graphics* circle color fill? thickness))))
+    (draw ^Graphics2D *graphics* circle color fill? thickness))))
 
 (defn get-text-dimensions
   "Gets the width and the height of a given text"
@@ -126,12 +126,13 @@
    (text x y content color font-size nil))
   ([^Integer x ^Integer y ^String content color font-size style]
    (let [^Graphics2D gr *graphics*
-         ^java.awt.Font font (.getFont gr)
-         ^java.awt.Font font (.deriveFont font (float font-size))
-         ^java.awt.Font font (.deriveFont font ^Integer (cond
-                                                          (= style :bold) java.awt.Font/BOLD
-                                                          (= style :italic) java.awt.Font/ITALIC
-                                                          :else java.awt.Font/PLAIN))]
+        font (.getFont gr)
+        font (doto ^java.awt.Font font 
+                (.deriveFont (float font-size))
+                (.deriveFont  (cond 
+                                    (= style :bold) ^Integer java.awt.Font/BOLD
+                                    (= style :italic) ^Integer java.awt.Font/ITALIC
+                                    :else ^Integer java.awt.Font/PLAIN)))]
      (.setColor gr color)
      (.setFont gr font)
      (.drawString gr content x y))))
