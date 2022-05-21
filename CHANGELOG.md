@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.2
+
+* fix text sizing not working
+
 ### 0.0.1
 
 * added type hints to remove need for relection

@@ -83,7 +83,7 @@
 
 (defmacro draw-> 
   [canvas & body]
-  `(let [^Graphics2D graphics# (loop [^Graphics2D g# (.getGraphics (:canvas ~canvas))
+  `(let [^Graphics2D graphics# (loop [^Graphics2D g# (.getGraphics ^Graphics2D (:canvas ~canvas))
                                       hints# (:rendering ~canvas)]
                                  (if (seq hints#)
                                    (recur (doto g#
@@ -134,12 +134,11 @@
   ([^Integer x ^Integer y ^String content color font-size style]
    (let [^Graphics2D gr *graphics*
         font (.getFont gr)
-        font (doto ^java.awt.Font font 
-                (.deriveFont (float font-size))
-                (.deriveFont  (cond 
-                                    (= style :bold) ^Integer java.awt.Font/BOLD
-                                    (= style :italic) ^Integer java.awt.Font/ITALIC
-                                    :else ^Integer java.awt.Font/PLAIN)))]
+        font (.deriveFont font (float font-size))
+        font (.deriveFont font (cond 
+                                     (= style :bold) ^Integer java.awt.Font/BOLD
+                                     (= style :italic) ^Integer java.awt.Font/ITALIC
+                                     :else ^Integer java.awt.Font/PLAIN))]
      (.setColor gr color)
      (.setFont gr font)
      (.drawString gr content x y))))
