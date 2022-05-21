@@ -55,7 +55,7 @@
       (.addMouseMotionListener mouse-motion-events)
       (.addKeyListener key-events)
       (.setFocusTraversalKeysEnabled false))
-    {:window window :canvas canvas})))
+    {:window window :canvas {:canvas canvas :rendering {}}})))
 
 (defn properties 
   "Gets the properties of the context, which is the map returned by 'create-window' function"
@@ -83,9 +83,16 @@
 
 (defmacro draw-> 
   [canvas & body]
-  `(binding [^Graphics2D *graphics* (.getGraphics ~canvas)]
-    ~@body
-    (.dispose *graphics*)))
+  `(let [^Graphics2D graphics# (loop [^Graphics2D g# (.getGraphics (:canvas ~canvas))
+                                      hints# (:rendering ~canvas)]
+                                 (if (seq hints#)
+                                   (recur (doto g#
+                                            (.setRenderingHint (-> hints# first key) (-> hints# first val)))
+                                          (rest hints#))
+                                   g#))]
+    (binding [*graphics* graphics#]
+      ~@body
+      (.dispose ^Graphics2D *graphics*))))
 
 (defn rect 
   ([x y width height color fill?] (rect x y width height color fill? 1))
@@ -113,8 +120,8 @@
 
 (defn get-text-dimensions
   "Gets the width and the height of a given text"
-  [^Canvas canvas text font-size]
-  (let [^Graphics2D gr (.getGraphics canvas)
+  [canvas text font-size]
+  (let [^Graphics2D gr (.getGraphics  ^java.awt.Canvas (:canvas canvas))
         ^java.awt.Font font (.getFont gr)
         ^java.awt.Font font (.deriveFont font (float font-size))]
     (.setFont gr font)
