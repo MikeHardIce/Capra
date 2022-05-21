@@ -9,7 +9,7 @@ Little straight forward drawing library that uses Java AWT underneath.
 
 Use via 
 ```Clojure
-[com.github.mikehardice/capra "0.0.1-alpha4"]
+[com.github.mikehardice/capra "0.0.1"]
 ```
 in your project.clj
 

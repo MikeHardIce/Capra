@@ -1,13 +1,13 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
-### 0.1.0
+### 0.0.1
 
 * added type hints to remove need for relection
 * support of java.awt.RenderingHints -> the context create by create-window
   has now an additional key called :rendering which can contain a map with
   the RenderingHints Key and Value like {RenderingHints/KEY_ANTIALIASING RenderingHints/VALUE_ANTIALIAS_ON}
-  
+
 ### 0.0.1-alpha4
 
 * added properties function which returns a map of the window/canvas properties
