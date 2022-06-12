@@ -3,6 +3,7 @@
   (:import [java.awt Color Shape Dimension Graphics2D Canvas BorderLayout Rectangle BasicStroke]
            [java.awt.event InputEvent ComponentEvent KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter WindowAdapter WindowEvent]
            [java.awt.geom Ellipse2D Ellipse2D$Double Line2D Line2D$Double Rectangle2D]
+           [java.awt.image BufferStrategy]
            [javax.swing ImageIcon JFrame]))
 
 (set! *warn-on-reflection* true)
@@ -57,6 +58,15 @@
       (.setFocusTraversalKeysEnabled false))
     {:window window :canvas {:canvas canvas :rendering {}}})))
 
+(defn attach-buffered-strategy
+  [canvas buffer-count]
+  (let [canvas (if (:has-buffer? canvas)
+                 canvas
+                 (do 
+                   (.createBufferStrategy ^Canvas (:canvas canvas) buffer-count)
+                   (assoc canvas :has-buffer? true)))]
+    canvas))
+
 (defn properties 
   "Gets the properties of the context, which is the map returned by 'create-window' function"
   [{:keys [^JFrame window ^Canvas canvas]}]
@@ -70,7 +80,8 @@
   [^JFrame window]
   (.dispatchEvent window (java.awt.event.WindowEvent. window java.awt.event.WindowEvent/WINDOW_CLOSING)))
 
-(declare ^:dynamic *graphics*)
+(declare ^:dynamic ^BufferStrategy *strategy*)
+(declare ^:dynamic ^Graphics2D *graphics*)
 
 (defn- draw 
   [^Graphics2D graphics ^Shape shape color fill? thickness]
@@ -81,9 +92,19 @@
       (.draw graphics shape))
   graphics)
 
+(defmacro use-buffer->
+  [canvas & body]
+  `(let [strategy# (.getBufferStrategy ^Canvas (:canvas ~canvas))]
+     (binding [*strategy* strategy#]
+       ~@body
+       (.show *strategy*))))
+
 (defmacro draw-> 
   [canvas & body]
-  `(let [^Graphics2D graphics# (loop [^Graphics2D g# (.getGraphics ^Graphics2D (:canvas ~canvas))
+  `(let [graph# (if *strategy*
+                  (.getDrawGraphics *strategy*)
+                  (.getGraphics ^Canvas (:canvas ~canvas)))
+         ^Graphics2D graphics# (loop [g# ^Graphics2D graph#
                                       hints# (:rendering ~canvas)]
                                  (if (seq hints#)
                                    (recur (doto g#
