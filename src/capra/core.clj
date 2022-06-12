@@ -101,7 +101,7 @@
 
 (defmacro draw-> 
   [canvas & body]
-  `(let [graph# (if *strategy*
+  `(let [graph# (if (bound? #'*strategy*)
                   (.getDrawGraphics *strategy*)
                   (.getGraphics ^Canvas (:canvas ~canvas)))
          ^Graphics2D graphics# (loop [g# ^Graphics2D graph#

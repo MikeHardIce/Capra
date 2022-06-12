@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.3 (work in progress)
+
+* support double buffering, but so that one could draw multiple times before the buffer is flipped
+
 ### 0.0.2
 
 * fix text sizing not working
