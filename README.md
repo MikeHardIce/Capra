@@ -49,3 +49,27 @@ in your project.clj
 (defmethod handle-event :key-pressed [_ {:keys [code char]}]
   (println "key pressed " code " (code) " char " (char)"))
 ```
+
+Capra now also supports double buffering. To let all draw-> calls draw to the same buffer, use use-buffer-> which will flip the buffer at the end.
+Example as above but with double buffering:
+
+```Clojure
+(defn main []
+  (let [context (create-window 200 100 500 600 "Meeehhhh" Color/black false "resources/icon-test.bla")
+        canvas (assoc (:canvas context) :rendering {RenderingHints/KEY_ANTIALIASING RenderingHints/VALUE_ANTIALIAS_ON})
+        canvas (attach-buffered-strategy canvas 2)]
+    (doto (:window context)
+      (.setLocation 300 200))
+    (use-buffer-> canvas
+     (draw-> canvas
+             (rect 100 100 50 60 Color/yellow true)
+             (rect 300 100 50 60 Color/black false)
+             (rect 100 300 50 60 Color/green true)
+             (rect 300 300 50 60 Color/orange true)
+             (line 200 200 400 400 Color/green 5)
+             (text 200 50 "Hello this is a test" Color/pink 20))
+     (draw-weigth canvas 400 400)
+     (draw-weigth canvas 200 200))
+    (println "Size: " (get-text-dimensions canvas "Hello this is a test" 20))
+    canvas))
+```

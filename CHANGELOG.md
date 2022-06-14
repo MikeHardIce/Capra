@@ -1,7 +1,7 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
-### 0.0.3 (work in progress)
+### 0.0.3
 
 * support double buffering, but so that one could draw multiple times before the buffer is flipped
 
