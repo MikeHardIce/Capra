@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.4 (in progress)
+
+* support multiple windows
+
 ### 0.0.3
 
 * support double buffering, but so that one could draw multiple times before the buffer is flipped

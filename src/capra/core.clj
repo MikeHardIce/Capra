@@ -15,20 +15,20 @@
 
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
-  ([x y width height title] (create-window x y width height title Color/white false nil))
-  ([x y width height title color] (create-window x y width height title color false nil))
-  ([x y width height title color resizable?] (create-window x y width height title color resizable? nil))
-  ([x y width height title color resizable? icon-path]
+  ([name x y width height title] (create-window name x y width height title Color/white false nil))
+  ([name x y width height title color] (create-window name x y width height title color false nil))
+  ([name x y width height title color resizable?] (create-window name x y width height title color resizable? nil))
+  ([name x y width height title color resizable? icon-path]
   (let [dimension (Dimension. width height)
         mouse-events (proxy [MouseAdapter] []
-                       (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event)}))
-                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event)})))
+                       (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event) :window name}))
+                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event) :window name})))
         mouse-motion-events (proxy [MouseMotionAdapter] []
-                              (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event)}))
-                              (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:x (.getX event) :y (.getY event)})))
+                              (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event) :window name}))
+                              (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:x (.getX event) :y (.getY event) :window name})))
         key-events (proxy [KeyAdapter] []
-                     (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event)}))
-                     (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event)})))
+                     (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event) :window name}))
+                     (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event) :window name})))
         canvas (doto (Canvas.)
                  (.setName title)
                  (.setPreferredSize dimension)
@@ -42,7 +42,7 @@
       (.setResizable resizable?)
       (.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE)
       ;(.addWindowListener (fn [frame _] (.dispose frame)))
-      (.setName title)
+      (.setName name)
       (.setTitle title)
       (.setLocation x y)
       (.setVisible true))
