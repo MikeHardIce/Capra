@@ -4,6 +4,7 @@
 ### 0.0.4 (in progress)
 
 * support multiple windows
+* **signature of create-window changed! Now with name x y width height title and a map of options like :color :resizable? :icon-path :on-exit**
 
 ### 0.0.3
 

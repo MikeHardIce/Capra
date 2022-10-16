@@ -8,6 +8,9 @@
 
 (set! *warn-on-reflection* true)
 
+(defonce ^:const exit JFrame/EXIT_ON_CLOSE)
+(defonce ^:const hide JFrame/HIDE_ON_CLOSE)
+
 (defmulti handle-event (fn [action event]
                          action))
 
@@ -15,10 +18,10 @@
 
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
-  ([name x y width height title] (create-window name x y width height title Color/white false nil))
-  ([name x y width height title color] (create-window name x y width height title color false nil))
-  ([name x y width height title color resizable?] (create-window name x y width height title color resizable? nil))
-  ([name x y width height title color resizable? icon-path]
+  [name x y width height title {:keys [color resizable? icon-path on-close] :or {color Color/white 
+                                                                         resizable? false
+                                                                         icon-path nil
+                                                                         on-close exit}}]
   (let [dimension (Dimension. width height)
         mouse-events (proxy [MouseAdapter] []
                        (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event) :window name}))
@@ -40,7 +43,7 @@
       (.add canvas)
       (.setSize dimension)
       (.setResizable resizable?)
-      (.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE)
+      (.setDefaultCloseOperation on-close)
       ;(.addWindowListener (fn [frame _] (.dispose frame)))
       (.setName name)
       (.setTitle title)
@@ -56,7 +59,7 @@
       (.addMouseMotionListener mouse-motion-events)
       (.addKeyListener key-events)
       (.setFocusTraversalKeysEnabled false))
-    {:window window :canvas {:canvas canvas :rendering {}}})))
+    {:window window :canvas {:canvas canvas :rendering {}}}))
 
 (defn attach-buffered-strategy
   [canvas buffer-count]
