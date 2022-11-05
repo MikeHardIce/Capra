@@ -1,7 +1,7 @@
 (ns capra.core
   (:require [clojure.java.io])
   (:import [java.awt Color Shape Dimension Graphics2D Canvas BorderLayout Rectangle BasicStroke]
-           [java.awt.event InputEvent ComponentEvent KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter WindowAdapter WindowEvent]
+           [java.awt.event InputEvent ComponentEvent ComponentListener KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter WindowAdapter WindowEvent]
            [java.awt.geom Ellipse2D Ellipse2D$Double Line2D Line2D$Double Rectangle2D]
            [java.awt.image BufferStrategy]
            [javax.swing ImageIcon JFrame]))
@@ -16,6 +16,7 @@
 
 (defmethod handle-event :default [action event])
 
+;; TODO: event on window close/hide
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
   [name x y width height title {:keys [color resizable? icon-path on-close] :or {color Color/white 
@@ -32,6 +33,17 @@
         key-events (proxy [KeyAdapter] []
                      (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event) :window name}))
                      (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event) :window name})))
+        window-events (proxy [ComponentListener] []
+                        (componentHidden [^ComponentEvent event] (handle-event :window-hidden {:window name}))
+                        (componentMoved [^ComponentEvent event] (let [component (.getComponent event)
+                                                                      location (.getLocation component)
+                                                                      [x y w h] [(.getX location) (.getY location) (.getHeight component) (.getWidth component)]]
+                                                                  (handle-event :window-moved {:x x :y y :width w :height h :window name})))
+                        (componentResized [^ComponentEvent event] (let [component (.getComponent event)
+                                                                        location (.getLocation component)
+                                                                        [x y w h] [(.getX location) (.getY location) (.getHeight component) (.getWidth component)]]
+                                                                    (handle-event :window-resized {:x x :y y :width w :height h :window name})))
+                        (componentShown [^ComponentEvent event] (handle-event :window-shown {:window name})))
         canvas (doto (Canvas.)
                  (.setName title)
                  (.setPreferredSize dimension)
@@ -48,7 +60,8 @@
       (.setName name)
       (.setTitle title)
       (.setLocation x y)
-      (.setVisible true))
+      (.setVisible true)
+      (.addComponentListener window-events))
     (when (and (seq icon-path)
                (some #(.endsWith ^String icon-path %) [".png" ".gif" ".jpeg"])
                (.exists (clojure.java.io/file icon-path)))
