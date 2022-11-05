@@ -1,7 +1,7 @@
 (ns capra.core
   (:require [clojure.java.io])
   (:import [java.awt Color Shape Dimension Graphics2D Canvas BorderLayout Rectangle BasicStroke]
-           [java.awt.event InputEvent ComponentEvent ComponentListener KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter WindowAdapter WindowEvent]
+           [java.awt.event WindowListener WindowEvent ComponentEvent ComponentListener KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter]
            [java.awt.geom Ellipse2D Ellipse2D$Double Line2D Line2D$Double Rectangle2D]
            [java.awt.image BufferStrategy]
            [javax.swing ImageIcon JFrame]))
@@ -34,7 +34,7 @@
                      (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event) :window name}))
                      (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event) :window name})))
         window-events (proxy [ComponentListener] []
-                        (componentHidden [^ComponentEvent event] (handle-event :window-hidden {:window name}))
+                        #_(componentHidden [^ComponentEvent event] (handle-event :window-hidden {:window name}))
                         (componentMoved [^ComponentEvent event] (let [component (.getComponent event)
                                                                       location (.getLocation component)
                                                                       [x y w h] [(.getX location) (.getY location) (.getHeight component) (.getWidth component)]]
@@ -43,7 +43,15 @@
                                                                         location (.getLocation component)
                                                                         [x y w h] [(.getX location) (.getY location) (.getHeight component) (.getWidth component)]]
                                                                     (handle-event :window-resized {:x x :y y :width w :height h :window name})))
-                        (componentShown [^ComponentEvent event] (handle-event :window-shown {:window name})))
+                        #_(componentShown [^ComponentEvent event] (handle-event :window-shown {:window name})))
+        frame-events (proxy [WindowListener] []
+                       (windowClosed [^WindowEvent event] (handle-event :window-closed {:window name}))
+                       (windowIconified [^WindowEvent event] (handle-event :window-hidden {:window name}))
+                       (windowDeiconified [^WindowEvent event] (handle-event :window-shown {:window name}))
+                       (windowActivated [^WindowEvent event] (handle-event :window-focused {:window name}))
+                       (windowClosing [^WindowEvent event])
+                       (windowDeactivated [^WindowEvent event] (handle-event :window-unfocused {:window name}))
+                       (windowOpened [^WindowEvent event]))
         canvas (doto (Canvas.)
                  (.setName title)
                  (.setPreferredSize dimension)
@@ -56,11 +64,11 @@
       (.setSize dimension)
       (.setResizable resizable?)
       (.setDefaultCloseOperation on-close)
-      ;(.addWindowListener (fn [frame _] (.dispose frame)))
       (.setName name)
       (.setTitle title)
       (.setLocation x y)
       (.setVisible true)
+      (.addWindowListener frame-events)
       (.addComponentListener window-events))
     (when (and (seq icon-path)
                (some #(.endsWith ^String icon-path %) [".png" ".gif" ".jpeg"])
