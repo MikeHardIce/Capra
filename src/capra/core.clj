@@ -19,10 +19,11 @@
 ;; TODO: event on window close/hide
 (defn create-window
   "Creates and displays a window. Returns a map consisting of the window and the canvas"
-  [name x y width height title {:keys [color resizable? icon-path on-close] :or {color Color/white 
-                                                                         resizable? false
-                                                                         icon-path nil
-                                                                         on-close exit}}]
+  [name x y width height title {:keys [color resizable? icon-path on-close hide-title-bar?] :or {color Color/white
+                                                                                                 resizable? false
+                                                                                                 icon-path nil
+                                                                                                 on-close exit
+                                                                                                 hide-title-bar? false}}]
   (let [dimension (Dimension. width height)
         mouse-events (proxy [MouseAdapter] []
                        (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event) :window name}))
@@ -67,6 +68,7 @@
       (.setName name)
       (.setTitle title)
       (.setLocation x y)
+      (.setUndecorated hide-title-bar?)
       (.setVisible true)
       (.addWindowListener frame-events)
       (.addComponentListener window-events))
