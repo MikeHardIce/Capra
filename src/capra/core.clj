@@ -37,11 +37,11 @@
                         #_(componentHidden [^ComponentEvent event] (handle-event :window-hidden {:window name}))
                         (componentMoved [^ComponentEvent event] (let [component (.getComponent event)
                                                                       location (.getLocation component)
-                                                                      [x y w h] [(.getX location) (.getY location) (.getHeight component) (.getWidth component)]]
+                                                                      [x y w h] [(.getX location) (.getY location) (.getWidth component) (.getHeight component)]]
                                                                   (handle-event :window-moved {:x x :y y :width w :height h :window name})))
                         (componentResized [^ComponentEvent event] (let [component (.getComponent event)
                                                                         location (.getLocation component)
-                                                                        [x y w h] [(.getX location) (.getY location) (.getHeight component) (.getWidth component)]]
+                                                                        [x y w h] [(.getX location) (.getY location) (.getWidth component) (.getHeight component)]]
                                                                     (handle-event :window-resized {:x x :y y :width w :height h :window name})))
                         #_(componentShown [^ComponentEvent event] (handle-event :window-shown {:window name})))
         frame-events (proxy [WindowListener] []
