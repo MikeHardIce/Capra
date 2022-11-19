@@ -35,7 +35,7 @@
                      (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event) :window name}))
                      (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event) :window name})))
         window-events (proxy [ComponentListener] []
-                        #_(componentHidden [^ComponentEvent event] (handle-event :window-hidden {:window name}))
+                        (componentHidden [^ComponentEvent event] (handle-event :window-closed {:window name}))
                         (componentMoved [^ComponentEvent event] (let [component (.getComponent event)
                                                                       location (.getLocation component)
                                                                       [x y w h] [(.getX location) (.getY location) (.getWidth component) (.getHeight component)]]
@@ -44,7 +44,7 @@
                                                                         location (.getLocation component)
                                                                         [x y w h] [(.getX location) (.getY location) (.getWidth component) (.getHeight component)]]
                                                                     (handle-event :window-resized {:x x :y y :width w :height h :window name})))
-                        #_(componentShown [^ComponentEvent event] (handle-event :window-shown {:window name})))
+                        (componentShown [^ComponentEvent event] #_(handle-event :window-shown {:window name})))
         frame-events (proxy [WindowListener] []
                        (windowClosed [^WindowEvent event] (handle-event :window-closed {:window name}))
                        (windowIconified [^WindowEvent event] (handle-event :window-hidden {:window name}))
