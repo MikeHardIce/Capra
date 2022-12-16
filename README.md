@@ -71,7 +71,7 @@ There are a few window events that are currently supported
   (println "window unfocused " window))
 ```
 
-Capra supports *double buffering*. To let all draw-> calls draw to the same buffer, use use-buffer-> which will flip the buffer at the end.
+Capra supports **double buffering**. To let all draw-> calls draw to the same buffer, use use-buffer-> which will flip the buffer at the end.
 Example similar as above, but now with double buffering:
 
 ```Clojure
@@ -92,7 +92,7 @@ Example similar as above, but now with double buffering:
     canvas))
 ```
 
-There is now support for creating and drawing to *multiple windows*.
+There is now support for creating and drawing to **multiple windows**.
 ```Clojure
 (ns capra.playground
   (:require [capra.core :refer [ellipse rect line text create-window draw-> use-buffer-> get-text-dimensions handle-event attach-buffered-strategy exit hide]])
