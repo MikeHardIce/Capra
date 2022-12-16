@@ -44,7 +44,7 @@ The following shows a little example how to create a window and draw a few basic
     (println "Size: " (get-text-dimensions canvas "Hello this is a test" 20))
     canvas))
 ```
-There are a few window events that are currently supported
+There are a few **window events** that are currently supported
 ```Clojure
 (defmethod handle-event :mouse-dragged [_ event]
   (println "mouse at (" (:x event) " , " (:y event) ") is being dragged on window " (:window event)))
