@@ -131,3 +131,5 @@ There is now support for creating and drawing to **multiple windows**.
                           (line 200 200 400 400 Color/green 5)))
     canvas))
 ```
+
+**The content of a canvas won't be redrawn when the windows hides and is shown again. The consuming code would need to take care of this atm.**
