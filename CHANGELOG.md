@@ -1,7 +1,12 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
-### 0.0.4 (in progress)
+### 0.0.5
+
+* fix properties function
+* fix get-text-dimension not distinguishing between graphics and buffer
+
+### 0.0.4
 
 * support multiple windows
 * **signature of create-window changed! Now with name x y width height title and a map of options like :color :resizable? :icon-path :on-exit**

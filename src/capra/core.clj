@@ -95,10 +95,10 @@
 
 (defn properties 
   "Gets the properties of the context, which is the map returned by 'create-window' function"
-  [{:keys [^JFrame window ^Canvas canvas]}]
+  [{:keys [^JFrame window canvas]}]
   {:x (.getX window) :y (.getY window) 
    :width (.getWidth window) :height (.getHeight window)
-   :title (.getName window) :color (.getBackground canvas)
+   :title (.getName window) :color (.getBackground ^Canvas (:canvas canvas))
    :resizable? (.isResizable window)
    :icon-path (first (.getIconImages window))})
 
@@ -168,7 +168,9 @@
 (defn get-text-dimensions
   "Gets the width and the height of a given text"
   [canvas text font-size]
-  (let [^Graphics2D gr (.getGraphics  ^java.awt.Canvas (:canvas canvas))
+  (let [^Graphics2D gr (if (bound? #'*strategy*)
+                         (.getDrawGraphics *strategy*)
+                         (.getGraphics ^Canvas (:canvas canvas)))
         ^java.awt.Font font (.getFont gr)
         ^java.awt.Font font (.deriveFont font (float font-size))]
     (.setFont gr font)
