@@ -26,32 +26,32 @@
                                                                                                  hide-title-bar? false}}]
   (let [dimension (Dimension. width height)
         mouse-events (proxy [MouseAdapter] []
-                       (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event) :window name}))
-                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event) :window name})))
+                       (mousePressed [^MouseEvent event] (handle-event :mouse-pressed {:button (.getButton event) :x (.getX event) :y (.getY event) :window-name name}))
+                       (mouseReleased [^MouseEvent event] (handle-event :mouse-released {:button (.getButton event) :x (.getX event) :y (.getY event) :window-name name})))
         mouse-motion-events (proxy [MouseMotionAdapter] []
-                              (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event) :window name}))
-                              (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:x (.getX event) :y (.getY event) :window name})))
+                              (mouseMoved [^MouseEvent event] (handle-event :mouse-moved {:x (.getX event) :y (.getY event) :window-name name}))
+                              (mouseDragged [^MouseEvent event] (handle-event :mouse-dragged {:x (.getX event) :y (.getY event) :window-name name})))
         key-events (proxy [KeyAdapter] []
-                     (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event) :window name}))
-                     (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event) :window name})))
+                     (keyPressed [^KeyEvent event] (handle-event :key-pressed {:char (.getKeyChar event) :code (.getKeyCode event) :window-name name}))
+                     (keyReleased [^KeyEvent event] (handle-event :key-released {:char (.getKeyChar event) :code (.getKeyCode event) :window-name name})))
         window-events (proxy [ComponentListener] []
-                        (componentHidden [^ComponentEvent event] (handle-event :window-closed {:window name}))
+                        (componentHidden [^ComponentEvent event] (handle-event :window-closed {:window-name name}))
                         (componentMoved [^ComponentEvent event] (let [component (.getComponent event)
                                                                       location (.getLocation component)
                                                                       [x y w h] [(.getX location) (.getY location) (.getWidth component) (.getHeight component)]]
-                                                                  (handle-event :window-moved {:x x :y y :width w :height h :window name})))
+                                                                  (handle-event :window-moved {:x x :y y :width w :height h :window-name name})))
                         (componentResized [^ComponentEvent event] (let [component (.getComponent event)
                                                                         location (.getLocation component)
                                                                         [x y w h] [(.getX location) (.getY location) (.getWidth component) (.getHeight component)]]
-                                                                    (handle-event :window-resized {:x x :y y :width w :height h :window name})))
-                        (componentShown [^ComponentEvent event] #_(handle-event :window-shown {:window name})))
+                                                                    (handle-event :window-resized {:x x :y y :width w :height h :window-name name})))
+                        (componentShown [^ComponentEvent event] #_(handle-event :window-shown {:window-name name})))
         frame-events (proxy [WindowListener] []
-                       (windowClosed [^WindowEvent event] (handle-event :window-closed {:window name}))
-                       (windowIconified [^WindowEvent event] (handle-event :window-hidden {:window name}))
-                       (windowDeiconified [^WindowEvent event] (handle-event :window-shown {:window name}))
-                       (windowActivated [^WindowEvent event] (handle-event :window-focused {:window name}))
+                       (windowClosed [^WindowEvent event] (handle-event :window-closed {:window-name name}))
+                       (windowIconified [^WindowEvent event] (handle-event :window-hidden {:window-name name}))
+                       (windowDeiconified [^WindowEvent event] (handle-event :window-shown {:window-name name}))
+                       (windowActivated [^WindowEvent event] (handle-event :window-focused {:window-name name}))
                        (windowClosing [^WindowEvent event])
-                       (windowDeactivated [^WindowEvent event] (handle-event :window-unfocused {:window name}))
+                       (windowDeactivated [^WindowEvent event] (handle-event :window-unfocused {:window-name name}))
                        (windowOpened [^WindowEvent event]))
         canvas (doto (Canvas.)
                  (.setName title)
@@ -82,16 +82,17 @@
       (.addMouseMotionListener mouse-motion-events)
       (.addKeyListener key-events)
       (.setFocusTraversalKeysEnabled false))
-    {:window window :canvas {:canvas canvas :rendering {}}}))
+    {:frame window :canvas {:canvas canvas :rendering {}}}))
 
 (defn attach-buffered-strategy
-  [canvas buffer-count]
-  (let [canvas (if (:has-buffer? canvas)
+  [window buffer-count]
+  (let [canvas (:canvas window)
+        canvas (if (:has-buffer? canvas)
                  canvas
                  (do 
                    (.createBufferStrategy ^Canvas (:canvas canvas) buffer-count)
                    (assoc canvas :has-buffer? true)))]
-    canvas))
+    (assoc window :canvas canvas)))
 
 (defn properties 
   "Gets the properties of the context, which is the map returned by 'create-window' function"
@@ -103,8 +104,9 @@
    :icon-path (first (.getIconImages window))})
 
 (defn close-window 
-  [^JFrame window]
-  (.dispatchEvent window (java.awt.event.WindowEvent. window java.awt.event.WindowEvent/WINDOW_CLOSING)))
+  [window]
+  (let [window ^JFrame (:frame window)]
+    (.dispatchEvent window (java.awt.event.WindowEvent. window java.awt.event.WindowEvent/WINDOW_CLOSING))))
 
 (declare ^:dynamic ^BufferStrategy *strategy*)
 (declare ^:dynamic ^Graphics2D *graphics*)
@@ -119,19 +121,19 @@
   graphics)
 
 (defmacro use-buffer->
-  [canvas & body]
-  `(let [strategy# (.getBufferStrategy ^Canvas (:canvas ~canvas))]
+  [window & body]
+  `(let [strategy# (.getBufferStrategy ^Canvas (-> ~window :canvas :canvas))]
      (binding [*strategy* strategy#]
        ~@body
        (.show *strategy*))))
 
 (defmacro draw-> 
-  [canvas & body]
+  [window & body]
   `(let [graph# (if (bound? #'*strategy*)
                   (.getDrawGraphics *strategy*)
-                  (.getGraphics ^Canvas (:canvas ~canvas)))
+                  (.getGraphics ^Canvas (-> ~window :canvas :canvas)))
          ^Graphics2D graphics# (loop [g# ^Graphics2D graph#
-                                      hints# (:rendering ~canvas)]
+                                      hints# (-> ~window :canvas :rendering)]
                                  (if (seq hints#)
                                    (recur (doto g#
                                             (.setRenderingHint (-> hints# first key) (-> hints# first val)))
@@ -167,10 +169,10 @@
 
 (defn get-text-dimensions
   "Gets the width and the height of a given text"
-  [canvas text font-size]
+  [window text font-size]
   (let [^Graphics2D gr (if (bound? #'*strategy*)
                          (.getDrawGraphics *strategy*)
-                         (.getGraphics ^Canvas (:canvas canvas)))
+                         (.getGraphics ^Canvas (-> window :canvas :canvas)))
         ^java.awt.Font font (.getFont gr)
         ^java.awt.Font font (.deriveFont font (float font-size))]
     (.setFont gr font)

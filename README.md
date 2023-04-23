@@ -9,7 +9,7 @@ Little drawing library that uses Java AWT underneath.
 
 Use via 
 ```Clojure
-[com.github.mikehardice/capra "0.0.4"]
+[com.github.mikehardice/capra "0.0.5"]
 ```
 in your project.clj
 
@@ -132,4 +132,4 @@ There is now support for creating and drawing to **multiple windows**.
     canvas))
 ```
 
-**The content of a canvas won't be redrawn when the windows hides and is shown again. The consuming code would need to take care of this atm.**
+**The content of a canvas won't be redrawn when the window hides and is shown again. The consuming code would need to take care of this atm.**

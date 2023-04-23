@@ -1,6 +1,11 @@
 
 [back](https://github.com/MikeHardIce/Capra
 
+### 0.0.6 (in progress)
+
+* **make draw->, use-buffer->, get-text-dimensions and attach-buffered-strategy use the context returned from the create-window function**
+* **renamed key :window to :frame in map that returns for create-window**
+
 ### 0.0.5
 
 * fix properties function
