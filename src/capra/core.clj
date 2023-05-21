@@ -96,12 +96,12 @@
 
 (defn properties 
   "Gets the properties of the context, which is the map returned by 'create-window' function"
-  [{:keys [^JFrame window canvas]}]
-  {:x (.getX window) :y (.getY window) 
-   :width (.getWidth window) :height (.getHeight window)
-   :title (.getName window) :color (.getBackground ^Canvas (:canvas canvas))
-   :resizable? (.isResizable window)
-   :icon-path (first (.getIconImages window))})
+  [{:keys [^JFrame frame canvas]}]
+  {:x (.getX frame) :y (.getY frame) 
+   :width (.getWidth frame) :height (.getHeight frame)
+   :title (.getName frame) :color (.getBackground ^Canvas (:canvas canvas))
+   :resizable? (.isResizable frame)
+   :icon-path (first (.getIconImages frame))})
 
 (defn close-window 
   [window]

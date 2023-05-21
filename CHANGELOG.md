@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra)
 
+### 0.0.7
+
+* fixed bug in properties function expecting the context to contain a :window key instead of a :frame key
+
 ### 0.0.6
 
 * **make draw->, use-buffer->, get-text-dimensions and attach-buffered-strategy use the context returned from the create-window function**
