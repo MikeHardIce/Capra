@@ -99,7 +99,7 @@
   [{:keys [^JFrame frame canvas]}]
   {:x (.getX frame) :y (.getY frame) 
    :width (.getWidth frame) :height (.getHeight frame)
-   :title (.getName frame) :color (.getBackground ^Canvas (:canvas canvas))
+   :name (.getName frame) :title (.getTitle frame) :color (.getBackground ^Canvas (:canvas canvas))
    :resizable? (.isResizable frame)
    :icon-path (first (.getIconImages frame))})
 
@@ -172,7 +172,7 @@
   [window text font-size]
   (let [^Graphics2D gr (if (bound? #'*strategy*)
                          (.getDrawGraphics *strategy*)
-                         (.getGraphics ^Canvas (-> window :canvas :canvas)))
+                         (.getGraphics ^java.awt.Canvas (-> window :canvas :canvas)))
         ^java.awt.Font font (.getFont gr)
         ^java.awt.Font font (.deriveFont font (float font-size))]
     (.setFont gr font)
