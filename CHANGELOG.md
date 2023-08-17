@@ -1,6 +1,14 @@
 
 [back](https://github.com/MikeHardIce/Capra)
 
+### 0.0.9
+
+* removed reflections in use-buffer->, draw-> and get-text-dimensions
+
+### 0.0.8
+
+* fixed properties not returning title and name
+
 ### 0.0.7
 
 * fixed bug in properties function expecting the context to contain a :window key instead of a :frame key
