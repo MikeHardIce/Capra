@@ -122,7 +122,8 @@
 
 (defmacro use-buffer->
   [window & body]
-  `(let [strategy# (.getBufferStrategy ^Canvas (-> ~window :canvas :canvas))]
+  `(let [^java.awt.Canvas canv# (-> ~window :canvas :canvas)
+         strategy# (.getBufferStrategy canv#)]
      (binding [*strategy* strategy#]
        ~@body
        (.show *strategy*))))
@@ -131,7 +132,8 @@
   [window & body]
   `(let [graph# (if (bound? #'*strategy*)
                   (.getDrawGraphics *strategy*)
-                  (.getGraphics ^Canvas (-> ~window :canvas :canvas)))
+                  (let [^java.awt.Canvas canv# (-> ~window :canvas :canvas)]
+                    (.getGraphics canv#)))
          ^Graphics2D graphics# (loop [g# ^Graphics2D graph#
                                       hints# (-> ~window :canvas :rendering)]
                                  (if (seq hints#)
@@ -172,7 +174,8 @@
   [window text font-size]
   (let [^Graphics2D gr (if (bound? #'*strategy*)
                          (.getDrawGraphics *strategy*)
-                         (.getGraphics ^java.awt.Canvas (-> window :canvas :canvas)))
+                         (let [^java.awt.Canvas canv (-> window :canvas :canvas)]
+                           (.getGraphics canv)))
         ^java.awt.Font font (.getFont gr)
         ^java.awt.Font font (.deriveFont font (float font-size))]
     (.setFont gr font)
