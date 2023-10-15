@@ -9,11 +9,11 @@ Little drawing library that uses Java AWT underneath.
 
 Use via 
 ```Clojure
-[com.github.mikehardice/capra "0.0.9"]
+[com.github.mikehardice/capra "0.0.10"]
 ```
 in your project.clj
 
-The following shows a little example how to create a window and draw a few basic shapes.
+The following shows a little example how to create 2 windows and draw a few basic shapes, including loading an image on to the "main" window.
 ```Clojure
 (ns capra.playground
   (:require [capra.core :refer [ellipse rect line text create-window draw-> get-text-dimensions handle-event]])
@@ -28,20 +28,34 @@ The following shows a little example how to create a window and draw a few basic
           (ellipse x y 70 80 Color/green true)))
 
 (defn main []
-  (let [window (create-window "main" 200 100 500 600 "Meeehhhh" {:color Color/black :resizable? true :icon-path "resources/icon-test.bla" :on-close exit})
-        window (assoc-in window [:canvas :rendering] {RenderingHints/KEY_ANTIALIASING RenderingHints/VALUE_ANTIALIAS_ON})]
+  (let [window (create-window "main" 200 100 500 600 "Meeehhhh" {:color Color/white :resizable? true :icon-path "resources/icon-test.png" :on-close exit})
+        sub-window (create-window "not-main" 200 100 500 600 "This is not Main" {:color Color/black :resizable? false :icon-path "resources/icon-test.png" :on-close hide :hide-title-bar? true})
+        sub-window (attach-buffered-strategy sub-window 2)
+        window (assoc-in window [:canvas :rendering] {RenderingHints/KEY_ANTIALIASING RenderingHints/VALUE_ANTIALIAS_ON})
+        window (attach-buffered-strategy window 2)
+        pic (path->Image "resources/icon-test.png")]
     (doto (:frame window)
       (.setLocation 300 200))
-    (draw-> window
+    (use-buffer-> window
+                  (draw-> window
                           (rect 100 100 50 60 Color/yellow true)
                           (rect 300 100 50 60 Color/black false)
                           (rect 100 300 50 60 Color/green true)
                           (rect 300 300 50 60 Color/orange true)
                           (line 200 200 400 400 Color/green 5)
-                          (text 200 50 "Hello this is a test" Color/pink 20))
-    (draw-weigth window 400 400)
-    (draw-weigth window 200 200)
-    (println "Size: " (get-text-dimensions window "Hello this is a test" 20))))
+                          (text 200 50 "Hello this is a test" Color/pink 20)
+                          (image pic 10 10 200 200 Color/white))
+                  (draw-weigth window 400 400)
+                  (draw-weigth window 200 200)) 
+    (use-buffer-> sub-window
+                  (draw-> sub-window
+                          (rect 100 100 50 60 Color/yellow true)
+                          (rect 300 100 50 60 Color/pink false)
+                          (rect 100 300 50 60 Color/pink true)
+                          (rect 300 300 50 60 Color/orange true)
+                          (line 200 200 400 400 Color/green 5)))
+    (println "Size: " (get-text-dimensions sub-window "Hello this is a test" 20))
+    (println (properties window))))
 
 ```
 There are a few **window events** that are currently supported
