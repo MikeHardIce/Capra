@@ -147,6 +147,7 @@
       (.dispose ^Graphics2D *graphics*))))
 
 (defn rect 
+  "Draw a rectangle onto the window"
   ([x y width height color fill?] (rect x y width height color fill? 1))
   ([x y width height color fill? thickness]
   (let [^Rectangle2D rec (Rectangle. x y width height)]
@@ -158,12 +159,14 @@
   (.clearRect ^Graphics2D *graphics* x y width height))
 
 (defn line
+  "Draw a line onto the window"
   ([x0 y0 x1 y1 color] (line x0 y0 x1 y1 color 1))
   ([x0 y0 x1 y1 color thickness]
   (let [^Line2D line (Line2D$Double. x0 y0 x1 y1)]
     (draw ^Graphics2D *graphics* line color nil thickness))))
 
 (defn ellipse
+  "Draw an ellipse onto the window"
   ([x y width height color fill?] (ellipse x y width height color fill? 1))
   ([x y width height color fill? thickness]
   (let [[x0 y0] [(- x (/ width 2)) (- y (/ height 2))]
@@ -184,6 +187,7 @@
       [(.getWidth box) (.getHeight box)])))
 
 (defn text
+  "Display a text onto the window"
   ([^Integer x ^Integer y ^String content color font-size]
    (text x y content color font-size nil))
   ([^Integer x ^Integer y ^String content color font-size style]
@@ -199,10 +203,14 @@
      (.drawString gr content x y))))
 
 (defn image 
-  [^Integer x ^Integer y ^Image picture background-color]
-  (let [^Graphics2D gr *graphics*]
-    (.drawImage gr picture x y background-color nil)))
+  "Display a image onto the window"
+  ([^Image picture x y background-color]
+   (image picture x y 50 50 background-color))
+  ([^Image picture x y width height background-color]
+   (let [^Graphics2D gr *graphics*]
+     (.drawImage gr picture x y width height background-color nil))))
 
 (defn path->Image
+  "Load a Image from its location into memory"
   [file-path]
   (ImageIO/read (clojure.java.io/file file-path)))

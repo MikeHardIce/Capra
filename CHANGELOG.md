@@ -1,6 +1,10 @@
 
 [back](https://github.com/MikeHardIce/Capra)
 
+### 0.0.10
+
+* support for loading images
+
 ### 0.0.9
 
 * removed reflections in use-buffer->, draw-> and get-text-dimensions
