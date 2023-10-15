@@ -1,10 +1,11 @@
 (ns capra.core
   (:require [clojure.java.io])
-  (:import [java.awt Color Shape Dimension Graphics2D Canvas BorderLayout Rectangle BasicStroke]
+  (:import [java.awt Color Shape Dimension Graphics2D Canvas BorderLayout Rectangle BasicStroke Image]
            [java.awt.event WindowListener WindowEvent ComponentEvent ComponentListener KeyAdapter KeyEvent MouseAdapter MouseEvent MouseMotionAdapter]
            [java.awt.geom Ellipse2D Ellipse2D$Double Line2D Line2D$Double Rectangle2D]
            [java.awt.image BufferStrategy]
-           [javax.swing ImageIcon JFrame]))
+           [javax.swing ImageIcon JFrame]
+           [javax.imageio ImageIO ]))
 
 (set! *warn-on-reflection* true)
 
@@ -196,3 +197,12 @@
      (.setColor gr color)
      (.setFont gr font)
      (.drawString gr content x y))))
+
+(defn image 
+  [^Integer x ^Integer y ^Image picture background-color]
+  (let [^Graphics2D gr *graphics*]
+    (.drawImage gr picture x y background-color nil)))
+
+(defn path->Image
+  [file-path]
+  (ImageIO/read (clojure.java.io/file file-path)))
